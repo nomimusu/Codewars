@@ -1,0 +1,64 @@
+function expand(expr) {
+  //(ax+b)^n展开
+  //提取系数，项
+  const match = expr.match(/\(([-\d]*)(\w)\+?([-\d]*)\)\^(\d+)/);
+  const a = match[1] === ''? 1 : (match[1] === '-'? -1 : parseInt(match[1]));
+  const x = match[2];
+  const b = parseInt(match[3]);
+  const n = parseInt(match[4]);
+  
+  //计算二项式的系数
+  //函数计算的是x^k前的系数，x^k前的系数等于\binom{n}{k}
+  //\binom{n}{k} = !n / (!(n-k)*!k);
+  //组合数具有对称性，所以\binom{n}{k} === \binom{n}{n-k};
+  function binomialCoeff(n,k){
+    let res = 1;
+    
+    //利用组合数的对称性,减少计算量
+    if(k > n-k) k = n-k;
+    
+    //for循环得到的结果就是\binom{n}{n-k}
+    for(let i =0; i<k;++i){
+      res *= (n-i);
+      res /= (i+1);
+    }
+    
+    return res;
+  } 
+  
+  //生成展开后的项，并保存在result中
+  //二项式定理(a+b)^n = \sum_{k=0}^{n}\binom{n}{k} * a^{n-k} * b^{k}
+  let result = [];
+  
+  for(let k =0; k<=n;++k){
+    //获取系数
+    const coeff = binomialCoeff(n,k) * Math.pow(a,n-k) * Math.pow(b,k);
+    //获取幂
+    const powerX = n-k;
+    
+    //如果系数为0，直接跳过
+    if(coeff === 0) continue;
+    
+    //构建项
+    let term = '';
+    if(coeff === 1 && powerX !== 0){
+      //不显示系数1
+    }else if(coeff === -1 && powerX !== 0){
+      term += '-'
+    } else{
+      term += coeff;
+    }
+    
+    if(powerX > 0){
+      //当powerX等于1
+      term += x;
+      if(powerX > 1){
+        //当power等于1，2，3，.....
+        term += '^' + powerX;
+      }
+    }
+    result.push(term);
+  }
+  
+  return result.join('+').replace(/\+\-/g,'-');
+}
