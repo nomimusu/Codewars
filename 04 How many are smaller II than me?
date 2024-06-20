@@ -1,0 +1,63 @@
+#1 二分法
+class SortedList {
+  constructor() {
+    this.list = [];
+  }
+
+  insert(value) {
+    //right = this.list.length 而不是 this.list.length-1, 是因为mid = Math.floor((left+right)/2), 当length = 3，5，7等奇数时，mid等于1，2，3；list[1], list[2], list[3]刚好正中间那个元素
+    //当length = 4,6,8等偶数时，mid等于2，3，4；list[2],list[3],list[4]是正中间两个元素中靠右的那个元素
+    let left = 0,
+      right = this.list.length;
+
+    while (left < right) {
+      let mid = Math.floor((left + right) / 2);
+      if (this.list[mid] < value) {
+        //说明这个值的范围是list[mid+1] ----- lsit[right-1]之间
+        left = mid + 1;
+      } else {
+        //说明这个值的范围在list[left] ----- list[mid]
+        right = mid;
+      }
+    }
+    //以上while循环会最终出现list[left]，list[mid], list[right]这种情况(list[left], list[left+1], list[mid], list[right] 到下一步)
+    //情况一：list[left], list[left+1], list[mid], list[right]
+    // 如果value > list[mid], 那么value就要插入到index为right的这个位置；当value > list[mid], left = mid + 1正好等于right, this.list.splice(left,0,value)就把value插入到了inex为right的位置
+    // 如果value <= list[mid], right = mid, 则变成list[left], list[mid],list[right] ，如果list[mid]<value, value就要插入到index为right的位置，其余部分参考上；如果list[mid] >= value, right = mid, list[left], list[right]
+    // 此时list[mid]就是list[left], 如果value > list[left], value就要插入到index为right的位置，其余部分参考上；如果value <= list[left], 这种情况下value就是等于list[left], 把value插入到index为left的位置即可
+
+    //这里的left相当于元素value的index
+    this.list.splice(left, 0, value);
+  }
+
+  countSmaller(value) {
+    let left = 0,
+      right = this.list.length;
+    while (left < right) {
+      let mid = Math.floor((left + right) / 2);
+      if (this.list[mid] < value) {
+        left = mid + 1;
+      } else {
+        right = mid;
+      }
+    }
+
+    //left是元素的index，因为list是有序的，所以inex也代表着比该元素小的元素数目
+    return left;
+  }
+}
+
+const smaller = nums => {
+  let result = [];
+  const sortedList = new SortedList();
+
+  for (let i = nums.length - 1; i >= 0; i--) {
+    result[i] = sortedList.countSmaller(nums[i]);
+    sortedList.insert(nums[i]);
+  }
+
+  return result;
+};
+
+#2 时间复杂度为O(n)
+const smaller = nums => nums.map((x,i) => nums.slice(i+1).filter( y => y < x).length);
