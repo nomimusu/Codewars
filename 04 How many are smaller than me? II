@@ -61,3 +61,70 @@ const smaller = nums => {
 
 #2 时间复杂度为O(n)
 const smaller = nums => nums.map((x,i) => nums.slice(i+1).filter( y => y < x).length);
+
+#二叉搜索树
+class TreeNode{
+  constructor(val){
+    this.val = val; //val为该节点的值
+    this.count = 0; //count为左子树节点，即比该节点小的节点的数量
+    this.left = null; //左子节点
+    this.right = null;//右子节点
+    this.dup = 1;//二叉树该数字出现的次数
+  }
+}
+
+function insertNode(root,num){
+  //count存储比该节点小的节点数量
+  let count = 0;
+ 
+  while(true){
+  //num与root的值有三种大小关系：大于、小于、等于
+  if(num < root.val){
+    //root的左子树节点增加1
+    root.count++;
+    //判断root的左子节点是否为null，为null，num成为左子节点，不为null,左子节点成为root，再查询一遍，直到num成为一个左/右子节点
+    if(!root.left){
+      root.left = new TreeNode(num);
+      break;
+    }else{
+      root = root.left;
+    } 
+  }else if(num > root.val){
+    //num大于root节点和root节点的左子树节点
+    count += root.count + root.dup;
+    //判断root节点的右子节点是否为null，为null,num成为右子节点，不为null，num成为root，再查询一遍，直到num成为左/右子节点
+    if(!root.right){
+      root.right = new TreeNode(num);
+      break;
+    }else{
+      root = root.right;
+    }
+  } else{
+    //root的值与num相等
+    root.dup++;
+    count += root.count;
+    break;
+  }
+    
+  }
+  
+  return count;
+}
+
+function smaller(nums) {
+   //判断数组是否为合法值或者空数组
+  if(!nums || nums.length === 0) return [];
+  
+  //创建result数组，长度为n，元素类型为undefined, 用于存储每个位置上的结果
+  const n = nums.length;
+  let result = new Array(n);
+  result[n-1] = 0;
+  //因为是计算元素右边比它小的元素的数量，所以root选择最右边的元素
+  let root = new TreeNode(nums[n-1]);
+  
+  for(let i = n-2;i >= 0;i--){
+    result[i] = insertNode(root,nums[i]);
+  }
+  
+  return result;
+}
