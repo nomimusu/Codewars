@@ -1,0 +1,37 @@
+function Fighter(name, health, damagePerAttack) {
+  this.name = name;
+  this.health = health;
+  this.damagePerAttack = damagePerAttack;
+  this.toString = function () {
+    return this.name;
+  };
+}
+
+function declareWinner(fighter1, fighter2, firstAttacker) {
+  //判断谁先攻击
+  let currentAttacker = firstAttacker === fighter1.name ? fighter1 : fighter2;
+  let currentDefender = currentAttacker === fighter1 ? fighter2 : fighter1;
+
+  while (true) {
+    currentDefender.health -= currentAttacker.damagePerAttack;
+
+    if (currentDefender.health > 0) {
+      console.log(
+        `${currentAttacker.name} attacks ${currentDefender.name}; ${currentDefender} now has ${currentDefender.health} health.`
+      );
+    } else {
+      console.log(
+        `${currentAttacker.name} attacks ${currentDefender.name}; ${currentDefender} now has ${currentDefender.health} health and is dead. ${currentAttacker.name} wins.`
+      );
+      return currentAttacker.name;
+    }
+
+    [currentAttacker, currentDefender] = [currentDefender, currentAttacker];
+  }
+}
+
+declareWinner(
+  new Fighter('Jerry', 30, 3),
+  new Fighter('Harald', 20, 5),
+  'Harald'
+);
