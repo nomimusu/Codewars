@@ -1,0 +1,69 @@
+//取出牌面的数字
+const face_number = {T:10, J:11, Q:12, K:13, A:14};
+const card_to_number = x => face_number[x[0]] || +x[0];
+const cards_to_numbers = h => h.split(' ').map(card_to_number);
+//判断顺子
+const straight = h => {
+  const sortedCards = cards_to_numbers(h).sort((a,b) => a-b);
+  let prevCard = sortedCards[0];
+  for(let i = 1;i<sortedCards.length;i++){
+    const currCard = sortedCards[i];
+    if(currCard - prevCard === 1){
+      prevCard = currCard;
+    } else {
+      return null;
+    }
+  }
+  
+  return h;
+};
+//判断同花
+const flush = h => /^.(.) .\1 .\1 .\1 .\1$/.test(h);
+//按从大到小排列牌面
+const sort_cards = h => h.split(' ').sort((a,b) => card_to_number(b)-card_to_number(a)).join(' ');
+//判断最大的单牌
+const highest_card = h => h.slice(0,2);
+//取符合正则表达式的牌面部分
+match_res = m => (m === null? null : m[0]);
+
+//不同牌面的大小
+const order = [
+  {n:'straight_flush', f: x => straight(x) && flush(x)? x : null},
+  {n:'four', f:x => match_res(x.match(/(.). \1. \1. \1./))},
+  {n:'full_house', f:x => match_res(x.match(/(.). \1. \1. (.). \2./) || x.match(/(.). \1. (.). \2. \2./))},
+  {n:'flush', f:x=> flush(x)? x : null},
+  {n:'straight', f:x => straight(x)?x:null},
+  {n:'three', f:x => match_res(x.match(/(.). \1. \1./))},
+  {n:'two_pair', f:x => match_res(x.match(/.*(.). \1..*(.). \2..*/))},
+  {n:'one_pair', f: x => match_res(x.match(/.*(.). \1..*/))},
+  {n:'highest_card', f:x=> x}
+];
+
+//判断手上的牌属于什么牌面
+const find_sorted_card = h => {
+  for(let i = 0; i<order.length;i++){
+    const res = order[i].f(h);
+    if(res !== null) return {i:i, res:res, name:order[i].n};
+  }
+}
+
+const find_cards = h => find_sorted_card(sort_cards(h));
+
+//比较两副牌牌面的大小
+const Result = {win :1, loss:2, tie:3};
+
+function PokerHand(hand){
+  this.hand = find_cards(hand);
+  this.high_to_low = cards_to_numbers(sort_cards(hand));
+}
+
+PokerHand.prototype.compareWith = function(other){
+  if(this.hand.i < other.hand.i) return Result.win;
+  if(this.hand.i > other.hand.i) return Result.loss;
+  for(let i = 0; i<5;i++){
+    if(this.high_to_low[i] > other.high_to_low[i]) return Result.win;
+    if(this.high_to_low[i] < other.high_to_low[i]) return Result.loss;
+  }
+  
+  return Result.tie;
+}
