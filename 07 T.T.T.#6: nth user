@@ -1,1 +1,19 @@
 #1 暴力求解
+function findNthUserNumber(n) {
+  function containForbiddenDigits(num) {
+    const numStr = num.toString();
+    return numStr.includes('4') || numStr.includes('9');
+  }
+
+  let userCount = 0;
+  let currentNum = 0;
+
+  while (userCount < n) {
+    currentNum++;
+    if (!containForbiddenDigits(currentNum)) {
+      userCount++;
+    }
+  }
+
+  return currentNum.toString();
+}
