@@ -17,3 +17,13 @@ function findNthUserNumber(n) {
 
   return currentNum.toString();
 }
+
+#2 按位求解
+//因为跳过了4和9，所以相当于output中连续8个数就会有进1位，所以将n转换为8进制；只要是跳过了2位，那么output连续8个数就会进1位
+//ouput连续8个数就对应到n的连续8个数，所以将n转换为8进制
+// n = 1, 2, 3, 4, 5, 6, 7, 8
+// output = 1, 2, 3, 5, 6, 7, 8, 10
+// 因为是跳过了4，所以n的4和之后的5，6，7都需要加1
+function userNumber(n) {
+  return n.toString(8).replace(/[4-7]/g, x => +x + 1);
+}
