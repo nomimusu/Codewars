@@ -1,0 +1,26 @@
+//解法一
+function ipsBetween(start, end) {
+  //IPv4地址是由4个字节组成，每个字节8位，取值范围为0-255
+  //4个字节从左到右的权重分别为256^3, 256^2, 256^1, 256^0
+  //取出每一个字节代表的数字
+  const startDigits = start.split('.');
+  const endDigits = end.split('.');
+  let startSum = 0;
+  let endSum = 0;
+
+  startDigits.forEach(
+    (digit, index) => (startSum += (Number(digit) * (256 ** (3 - index))
+  )));
+  endDigits.forEach(
+    (digit, index) => (endSum += (Number(digit) * (256 ** (3 - index))
+  )));
+
+  return endSum - startSum;
+}
+
+//解法2
+function ipsBetween(start, end){
+  const num = ip => ip.split('.').map(x=> parseInt(x)).reduce((acc,cur) => acc*256+cur);
+  return num(end)-num(start);
+}
+
