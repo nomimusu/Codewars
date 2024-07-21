@@ -1,0 +1,38 @@
+function sudoku(puzzle) {
+  const valid = (x, y) => {
+    var v = [];
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        //[x][y]所在行的元素
+        v.push(puzzle[x][i * 3 + j]);
+        //[x][y]所在列的元素
+        v.push(puzzle[i * 3 + j][y]);
+        //[x][y]所在九宫格的所有元素,
+        v.push(puzzle[3 * Math.floor(x / 3) + i][3 * Math.floor(y / 3) + j]);
+      }
+    }
+    //筛选出[1,2,...,9]中不在v中的元素，即该格中可以填入的数字
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(e => v.indexOf(e) == -1);
+  };
+  const rec = (x, y) => {
+    //完成了整个棋盘的遍历，说明成功填充了所有正确的数字
+    if (y == 9) {
+      return puzzle;
+      //当前格子puzzle[x][y]为0
+    } else if (!puzzle[x][y]) {
+      //如果valid(x,y)返回的是一个空数组，即格子[x][y]没有可以填入的合法值，即[x][y]所在的行、列、九宫格已经包含了1-9所有数字，[x][y]无法填入任何合法数字
+      //那么valid(x,y).some()会返回false，说明此次递归调用失败
+      //重置pazzle[x][y]的值为0，尝试下一个合法数字
+      const correct = valid(x, y).some(i => {
+        puzzle[x][y] = i;
+        return rec((x + 1) % 9, y + (x == 8 ? 1 : 0));
+      });
+      if (correct) return puzzle;
+      puzzle[x][y] = 0;
+      //当前格子pazzle[x][y]不为0，直接跳到下个格子进行判断
+    } else {
+      return rec((x + 1) % 9, y + (x == 8 ? 1 : 0));
+    }
+  };
+  return rec(0, 0);
+}
