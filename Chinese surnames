@@ -1,0 +1,8 @@
+function reverseSurname(surnames) {
+  return surnames
+    .match(new RegExp('(' + special.join('|') + '|.)', 'g'))
+    .reverse()
+    .join('')
+    .replace(/(.{4})(.{4})/g, '\n$1，$2。')
+    .slice(1);
+}
