@@ -1,0 +1,7 @@
+function collinearity( x1,y1, x2,y2 ) {
+  //判断是否为0向量
+  if((x1 === 0 && y1 === 0) || (x2 === 0 && y2 ===0))
+    return true;
+  //交叉乘积验证
+  return x2*y1 === x1*y2;
+}
