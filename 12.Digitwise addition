@@ -1,0 +1,21 @@
+function digitwiseAddition(N, K) {
+  // Test Constraints:
+  // 1 <= n <= 10 ** 9
+  // 1 <= k <= 10 ** 5
+  const mod = 10**9 + 7;
+  const digits = new Array(10).fill(0);
+  N.toString().split('').forEach(e => digits[Number(e)]++);
+  
+  for(let i = 0; i<K;i++){
+    //index依次为0,9,8,7,6,5,4,3,2,1的循环
+    let index = (10 - i%10)%10;
+    // (index+9)%10恰好比index小1
+    //迭代第一次,digits[0] = digits[0] + digits[9]。第一次迭代，数字9进位成10，是2位，1位的数量在9，1位的数量在0
+    //迭代第二次,digits[9] = digits[9] + digits[8]。第二次迭代，数字8进位成10，是2位，1位的数量在8，1位的数量在9
+    digits[index] = (digits[index] + digits[(index+9)%10]) % mod;
+  }
+  
+  return digits.reduce((acc,e) => (acc+e)%mod,0 );
+}
+
+//遗留问题为什么只有当K=10的时候，digits数组中(0-9)的数量才会跟N中(0-9)的数量相等
