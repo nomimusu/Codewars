@@ -1,0 +1,14 @@
+function vectorAffinity(xs,ys) {
+  if(xs.length === 0 && ys.length === 0)
+    return 1;
+  //判断数组长度
+  const length = Math.max(xs.length, ys.length)
+  //判断same index, same value的个数
+  let count = 0;
+  for (let i = 0; i < length; i++){
+    if (xs[i] === ys[i])
+      count++;
+  }
+  
+  return count/length;
+}
