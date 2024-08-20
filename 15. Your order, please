@@ -1,0 +1,15 @@
+function order(words){
+  // 如果输入字符串是空字符串，返回空字符串
+  if (words.length === 0) return '';
+  let answer = [];
+  
+  //按照字母中所含的数字排列字符
+  const arrWord = words.split(' ');
+  const length = arrWord.length;
+  for(let i = 1; i<= length; i++){
+    answer.push(arrWord.filter(word => word.includes(i.toString())));
+  }
+  
+  return answer.join(' ');
+  
+}
